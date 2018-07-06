@@ -27,6 +27,23 @@ cf) 6V : 대규모(Volume), 빠르게(Velocity) 발생하고 있는 다양한(Va
 실시간 수집을 위한 CEP, ESP
 Flume, Storm, Esper
 ```
+# 1.1 Flume, Kafka
+```
+데이터가 여러개 분산되어 있을때 한번에 집중화, filter 등
+통신 프로토콜, 메시지 포맷, 발생 주기, 데이터 크기에 따른 해결책을 제시.
+Source#N -> Channel#N -> Sink#N 의 구조로 되어있다. (N : N가지 종류의 소스 처리)
+Source(실시간 파일 끝 읽기, 파일 읽기 등...)
+Sink(카프라로 연결~?, HDFS에 저장~? 등....)
+
+활용방안
+1. 플룸>카프카>하둡(days Status Log Collet)
+이 프로젝트에서 반복적으로 발생하는 상태정보를 일 단위로 수집해서 하둡에 적재하는 역할을 수행할 것이다.
+(플룸의 메인 목적 : 하둡으로 데이터를 공급 & 로그파일 같은 비관계적 데이터소스)
+2. 플룸>카프카>스톰>레디스(realtime Driving Log Collect)
+(카프카의 메인 목적 : 분산 pub-sub 메세징 시스템 & 높은 신뢰성/확장성)
+플룸(source>chanel>sink) > 카프카(producer>버퍼링>토픽consumer) > 스톰
+이를 통해 과속으로 판단된 차량정보를 Redis에 저장할것이다. (플룸을 통해 다른 시스템과 유연하게 이동하는데 사용되는 사례)
+```
 ## 2. 적재
 ```
 분산 저장소에 적재하는 기술
@@ -35,6 +52,29 @@ HDFS, Hbase, Kafka ,Redis
 2. NoSQL(HBase, MongoDB, Casandra 등)  :  대규모 메시징 데이터를 영구 저장하기 위한 목적으로 사용된다.
 3. Inmemory Caching(Redis, Memcached, Infinispan 등) :  대규모 메세지 처리 결과를 고속으로 저장하기 위해 사용된다.
 4. MoM(Kafka, RabibitMQ, ActiveMQ 등) : 대규모 메세징 데이터를 임시 저장하기 위한 목적으로 사용 
+```
+# 2.1 Hadoop(HDFS)
+```
+대용량 데이터의 분산 (저장 + 처리)를 도와 주는 빅데이터 기술의 핵심 소프트웨어.
+하둡은 수집, 적재, 처리, 분석 전 영역과 연결되어 
+대표 기능 
+대용량 데이터의 분산 저장 : 분산 파일 시스템, HDFS
+분산 저장된 대용량 데이터 처리(분석)  : 분산 병렬 처리 기술, MapReduce
+client > NameNode, ResourceManager > DataNode, NodeManager(Container,ApplicationMaster)
+
+활용방안
+차량의 일별 Status datas를 파티션하여(나눠) HDFS에 적재할 것임.
+HIVE로 기간별로 다양한 집계분석을 할 것임.
+분석 결과를 Data Warehouse에 저장하여, 재사용, 고급분석으로 쓸 것임.
+```
+
+# 2.2 Zookeeper
+```
+하둡, 카프카, 스톰 Hbase 등의 분산 처리 시스템의 관리를 돕는다.
+주 기능: 서버간 공유되는 정보를 이용해, 부하 분산, 순서 제어 등의 관리를 해준다.
+
+활용 방안
+하둡, Hbase, kafka, storm 내부에서 내부 데이터와 환결 설정들을 동기화 하는 용도로 사용.
 ```
 
 ## 3. 처리/탐색
