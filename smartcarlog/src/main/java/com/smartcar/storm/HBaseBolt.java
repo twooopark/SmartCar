@@ -1,4 +1,4 @@
-package com.bigdata2017.smartcar.storm;
+package com.smartcar.storm;
 
 import java.io.IOException;
 import java.util.Map;
