@@ -1,4 +1,4 @@
-package com.bigdata2017.smartcar.storm;
+package com.smartcar.storm;
 
 import org.apache.storm.redis.bolt.AbstractRedisBolt;
 import org.apache.storm.redis.common.config.JedisClusterConfig;
