@@ -1,4 +1,4 @@
-package com.bigdata2017.smartcar;
+package com.smartcar;
 
 import java.io.FileWriter;
 import java.io.IOException;

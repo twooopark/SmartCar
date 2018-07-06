@@ -1,4 +1,4 @@
-package com.bigdata2017.smartcar;
+package com.smartcar;
 
 import java.util.HashMap;
 import java.util.Map;
